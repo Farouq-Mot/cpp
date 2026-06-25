@@ -2,6 +2,7 @@
 #include <vector>
 
 
+
 // Instead of copying expensive data from one object to another, C++ can move ownership of the data
 
 int main() {

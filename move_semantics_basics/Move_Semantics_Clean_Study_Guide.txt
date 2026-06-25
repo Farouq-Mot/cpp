@@ -1,0 +1,388 @@
+
+C++ MOVE SEMANTICS STUDY GUIDE
+==============================
+
+TABLE OF CONTENTS
+=================
+
+1. Why Move Semantics Exists
+2. Lvalues and Rvalues
+3. Reference Types
+4. Why const T& Accepts Temporaries
+5. Why T&& Was Added
+6. Named Rvalue References
+7. std::move Explained
+8. Move Constructor
+9. Move Assignment
+10. Rule of Five and Rule of Zero
+11. Move-Only Types
+12. RVO and NRVO
+13. noexcept
+14. std::forward
+15. Common Mistakes
+16. Complete Examples
+17. Interview Cheat Sheet
+
+
+------------------------------------------------------------------
+1. WHY MOVE SEMANTICS EXISTS
+------------------------------------------------------------------
+
+Question:
+Why was move semantics added to C++?
+
+Answer:
+Copying large objects can be expensive. Move semantics allows
+ownership of resources to be transferred instead of copied.
+
+Examples of resources:
+- Heap memory
+- File handles
+- Sockets
+- Threads
+- GPU buffers
+- Camera frame buffers
+
+
+------------------------------------------------------------------
+2. LVALUES AND RVALUES
+------------------------------------------------------------------
+
+Question:
+What is an lvalue?
+
+Answer:
+An lvalue has a name and a persistent identity.
+
+Example:
+
+    int x = 5;
+
+    x    // lvalue
+
+
+Question:
+What is an rvalue?
+
+Answer:
+An rvalue is a temporary value or expression.
+
+Examples:
+
+    5
+    x + 1
+    std::string("hello")
+
+
+------------------------------------------------------------------
+3. REFERENCE TYPES
+------------------------------------------------------------------
+
+Question:
+What are the three main reference types?
+
+Answer:
+
+1. T&
+   Binds to lvalues only.
+
+2. const T&
+   Binds to lvalues and rvalues.
+
+3. T&&
+   Binds to rvalues.
+
+
+------------------------------------------------------------------
+4. WHY const T& ACCEPTS TEMPORARIES
+------------------------------------------------------------------
+
+Question:
+Why can const T& bind to a temporary?
+
+Answer:
+Because it promises not to modify the object.
+
+Example:
+
+    const std::string& ref =
+        std::string("hello");
+
+The lifetime of the temporary is extended.
+
+
+------------------------------------------------------------------
+5. WHY T&& WAS ADDED
+------------------------------------------------------------------
+
+Question:
+Why was T&& introduced in C++11?
+
+Answer:
+Before C++11, temporaries could not efficiently transfer ownership.
+T&& allows move semantics.
+
+
+------------------------------------------------------------------
+6. NAMED RVALUE REFERENCES
+------------------------------------------------------------------
+
+Question:
+Why is a named rvalue reference an lvalue?
+
+Answer:
+Any expression with a name is an lvalue.
+
+Example:
+
+    std::string&& s =
+        std::string("hello");
+
+    s        // lvalue
+
+    std::move(s)   // rvalue
+
+
+------------------------------------------------------------------
+7. std::move EXPLAINED
+------------------------------------------------------------------
+
+Question:
+Does std::move actually move anything?
+
+Answer:
+No.
+
+std::move only performs a cast.
+
+Conceptually:
+
+    std::move(x)
+
+means:
+
+    "Treat x as an rvalue."
+
+
+------------------------------------------------------------------
+8. MOVE CONSTRUCTOR
+------------------------------------------------------------------
+
+Question:
+What is a move constructor?
+
+Answer:
+A move constructor creates a new object by stealing resources.
+
+Syntax:
+
+    Buffer(Buffer&& other) noexcept;
+
+Example:
+
+    Buffer b2 = std::move(b1);
+
+
+------------------------------------------------------------------
+9. MOVE ASSIGNMENT
+------------------------------------------------------------------
+
+Question:
+What is move assignment?
+
+Answer:
+Move assignment transfers ownership into an existing object.
+
+Syntax:
+
+    Buffer& operator=(Buffer&& other);
+
+Example:
+
+    b2 = std::move(b1);
+
+
+------------------------------------------------------------------
+10. RULE OF FIVE AND RULE OF ZERO
+------------------------------------------------------------------
+
+Question:
+What is the Rule of Five?
+
+Answer:
+
+1. Destructor
+2. Copy Constructor
+3. Copy Assignment
+4. Move Constructor
+5. Move Assignment
+
+
+Question:
+What is the Rule of Zero?
+
+Answer:
+Prefer standard library types such as:
+
+- std::vector
+- std::string
+- std::unique_ptr
+
+and let the compiler generate the special functions.
+
+
+------------------------------------------------------------------
+11. MOVE-ONLY TYPES
+------------------------------------------------------------------
+
+Question:
+What are move-only types?
+
+Answer:
+
+Examples:
+
+- std::unique_ptr
+- std::thread
+
+These types can be moved but not copied.
+
+
+------------------------------------------------------------------
+12. RVO AND NRVO
+------------------------------------------------------------------
+
+Question:
+What should I return from a function?
+
+Answer:
+
+Preferred:
+
+    return obj;
+
+Usually avoid:
+
+    return std::move(obj);
+
+
+------------------------------------------------------------------
+13. noexcept
+------------------------------------------------------------------
+
+Question:
+Why should move constructors be noexcept?
+
+Answer:
+Containers such as std::vector prefer move operations that cannot
+throw exceptions.
+
+
+------------------------------------------------------------------
+14. std::forward
+------------------------------------------------------------------
+
+Question:
+When should I use std::forward?
+
+Answer:
+Inside templates when you want to preserve whether the original
+argument was an lvalue or rvalue.
+
+
+------------------------------------------------------------------
+15. COMMON MISTAKES
+------------------------------------------------------------------
+
+1. Thinking std::move performs a move.
+
+2. Using moved-from objects.
+
+3. Returning std::move(local).
+
+4. Moving const objects.
+
+
+------------------------------------------------------------------
+16. COMPLETE EXAMPLES
+------------------------------------------------------------------
+
+Example 1: Reference Binding Rules
+
+#include <string>
+
+std::string name = "Farouq";
+
+foo(name);                  // lvalue
+foo(std::string("temp"));   // rvalue
+
+std::string& ref1 = name;
+
+const std::string& ref2 = name;
+
+const std::string& ref3 = std::string("x");
+
+// std::string& ref4 = std::string("x"); // ERROR
+
+std::string&& ref5 = std::string("x");
+
+
+Example 2: Named Rvalue References
+
+#include <iostream>
+#include <string>
+
+void test(std::string&)
+{
+    std::cout << "lvalue\n";
+}
+
+void test(std::string&&)
+{
+    std::cout << "rvalue\n";
+}
+
+int main()
+{
+    std::string&& s = std::string("hello");
+
+    test(s);
+
+    test(std::move(s));
+}
+
+Output:
+
+lvalue
+rvalue
+
+
+------------------------------------------------------------------
+17. INTERVIEW CHEAT SHEET
+------------------------------------------------------------------
+
+1. Move transfers ownership.
+
+2. std::move is a cast.
+
+3. Lvalues have names.
+
+4. Rvalues are temporaries.
+
+5. T& binds to lvalues.
+
+6. const T& binds to both lvalues and rvalues.
+
+7. T&& binds to rvalues.
+
+8. Named rvalue references are lvalues.
+
+9. Moved-from objects are valid but unspecified.
+
+10. Prefer:
+
+        return obj;
+
+    instead of:
+
+        return std::move(obj);

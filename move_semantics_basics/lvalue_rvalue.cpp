@@ -34,8 +34,6 @@ print_str_rvalue_only(std::move(s1));
 print_str_rvalue_only("test_rvalue");
 
 
-
-
 return 0;
 }
 
