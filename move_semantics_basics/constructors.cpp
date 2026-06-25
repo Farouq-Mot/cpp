@@ -1,7 +1,6 @@
 // Tutorial for copy, move constructor, assigment and destructor
 #include <iostream>
 
-
 // keyword public matters since class is private by default.
 class person1{
     public: 

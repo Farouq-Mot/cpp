@@ -2,9 +2,9 @@
 C++ MOVE SEMANTICS STUDY GUIDE
 ==============================
 
+
 TABLE OF CONTENTS
 =================
-
 1. Why Move Semantics Exists
 2. Lvalues and Rvalues
 3. Reference Types

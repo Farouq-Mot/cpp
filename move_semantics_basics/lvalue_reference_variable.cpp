@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 
-
-
 /*
 If an interviewer asks:
 

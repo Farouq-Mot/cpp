@@ -1,7 +1,6 @@
 
 #include <iostream>
 
-
 // std::move converts an lvalue into an rvalue reference.
 
 // Before C++11, there was a major problem:
