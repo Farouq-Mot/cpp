@@ -1,5 +1,5 @@
 
-// Tutorial for constructor
+// Tutorial for constructor. need to add examples and reasons.
 #include <iostream>
 
 // keyword public matters since class is private by default.
