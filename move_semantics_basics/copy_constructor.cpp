@@ -154,6 +154,7 @@ public:
     }
 };
 
+// ============= using vecotr instead of float pointer to eliminate custom copy constructor and destructor ============
 // in this class, I used a vecotr instead of a pointer to float.
 // vecotr takes care of copy and move constrcutor and there is not need to implemnte custom copy constructor or 
 // and there is no need to delete any thing using the destructor.
