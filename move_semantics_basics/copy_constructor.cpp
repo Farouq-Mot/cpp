@@ -32,9 +32,16 @@ Case	Example	Why?
 ✅ Any custom resource	CAN device, USB device, serial port	Resource owner
 */
 
+/*
+You are writing software for a vehicle safety system. A camera/LiDAR module produces a SensorSnapshot. 
+Each snapshot contains the class below.
+distances_m is a dynamically allocated array containing distance readings in meters.
+
+Your task: implement a proper copy constructor so this code works safely
+*/
+
 
 #include <iostream>
-
 
 /*
 class SensorSnapshot
@@ -81,7 +88,7 @@ public:
     }
 
     // TODO: implement copy constructor here
-    
+
 
 
 
