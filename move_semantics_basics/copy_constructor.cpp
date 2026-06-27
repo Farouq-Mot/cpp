@@ -174,7 +174,7 @@ class SensorSnapshot_NPointer{
     {};
 
 
-    setDistance(int index, float dist){
+    void setDistance(int index, float dist){
 
         if (index >=0 && index < point_count)
         {
@@ -182,9 +182,29 @@ class SensorSnapshot_NPointer{
         }
         else{
 
-            std::cout << "index out of bound";
+            std::cout << "index out of bound" << std::endl;
+        };
+
+
+    };
+
+    void print_address(){
+        std::cout << " Object address " << this << std::endl;
+        std::cout << " vecotr first element address " << distances_m.data() << std::endl;
+    }
+
+
+    void print_all(){
+
+        for ( auto const& d : distances_m ){
+
+            std::cout << d << std::endl;
         };
     }
+
+
+
+
 
 
 };
@@ -208,5 +228,25 @@ int main()
     original.print();
     copy.print();
 
-    return 0;
+    std:: cout << "========== section for modern class with  no float pointer" << std::endl;
+
+    SensorSnapshot_NPointer  s1_np (2, 2333500000, 2 );
+    SensorSnapshot_NPointer  s2_np (3, 3111500000, 3 );
+
+    s1_np.print_address();
+    s2_np.print_address();
+
+    s1_np.setDistance(0, 0.1);
+    s1_np.setDistance(1, 0.2);
+    s1_np.setDistance(2, 0.3);
+
+    s2_np.setDistance(0, 0.7);
+    s2_np.setDistance(1, 0.8);
+    s2_np.setDistance(2, 0.9);
+
+    s1_np.print_all();
+    s2_np.print_all();
+    
+    
+    return 0; 
 }
