@@ -1,3 +1,4 @@
+
 // Tutorial for copy, move constructor, assigment and destructor
 #include <iostream>
 
@@ -10,7 +11,6 @@ class person1{
 };
 
 // constructor overloading
-
 class person2{
 
     public:
@@ -24,17 +24,23 @@ class person2{
             std::cout << "str1 : " << str1 << std::endl;
         };
 
-        // added 
-
 };
+
+
+
+
+
+
+
+
+
 
 
 
 
 int main() {
 
-    //person1 p1;
-   
+    person1 p1;
     person2 p2_1;
     person2 p2_2(20, "excellent");
 
