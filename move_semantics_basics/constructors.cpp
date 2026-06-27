@@ -1,5 +1,5 @@
 
-// Tutorial for copy, move constructor, assigment and destructor
+// Tutorial for constructor
 #include <iostream>
 
 // keyword public matters since class is private by default.
@@ -25,9 +25,6 @@ class person2{
         };
 
 };
-
-
-
 
 
 
