@@ -1,0 +1,752 @@
+Composition vs Inheritance — Senior C++ Interview Guide
+
+Golden Rule
+
+  Favor composition over inheritance.
+
+This does not mean inheritance is bad. It means composition should
+usually be your default design choice, and inheritance should be used
+when there is a true “is-a” relationship or when runtime polymorphism is
+needed.
+
+------------------------------------------------------------------------
+
+1. What is Composition?
+
+Composition means one class contains or uses another class.
+
+It models a “has-a” relationship.
+
+Example:
+
+    #include <iostream>
+
+    class Engine
+    {
+    public:
+        void start()
+        {
+            std::cout << "Engine started\n";
+        }
+    };
+
+    class Car
+    {
+    private:
+        Engine engine_;
+
+    public:
+        void start()
+        {
+            engine_.start();
+        }
+    };
+
+A Car has an Engine.
+
+A car is not an engine.
+
+------------------------------------------------------------------------
+
+2. What is Inheritance?
+
+Inheritance means one class is a specialized version of another class.
+
+It models an “is-a” relationship.
+
+Example:
+
+    #include <iostream>
+
+    class Animal
+    {
+    public:
+        virtual ~Animal() = default;
+
+        virtual void speak() = 0;
+    };
+
+    class Dog : public Animal
+    {
+    public:
+        void speak() override
+        {
+            std::cout << "Woof\n";
+        }
+    };
+
+A Dog is an Animal.
+
+This is a good use of inheritance.
+
+------------------------------------------------------------------------
+
+3. Why is Composition Preferred?
+
+Composition is preferred because it usually creates designs that are:
+
+-   Less coupled
+-   Easier to test
+-   Easier to modify
+-   Easier to extend
+-   Easier to maintain
+-   Less fragile than deep inheritance hierarchies
+
+Inheritance creates a strong relationship between the base class and
+derived class. If the base class changes, derived classes may break.
+
+Composition allows you to replace one component without changing the
+whole design.
+
+------------------------------------------------------------------------
+
+4. When is Inheritance Useful?
+
+Inheritance is useful when you need:
+
+A. A real “is-a” relationship
+
+Good examples:
+
+    Dog is an Animal
+    Circle is a Shape
+    Truck is a Vehicle
+
+Bad examples:
+
+    Car is an Engine
+    Camera is a Decoder
+    Window is a Keyboard
+
+The bad examples should use composition.
+
+------------------------------------------------------------------------
+
+B. Runtime polymorphism
+
+Inheritance is useful when you want to treat different objects through a
+common interface.
+
+Example:
+
+    #include <iostream>
+    #include <memory>
+    #include <vector>
+
+    class Sensor
+    {
+    public:
+        virtual ~Sensor() = default;
+
+        virtual void read() = 0;
+    };
+
+    class CameraSensor : public Sensor
+    {
+    public:
+        void read() override
+        {
+            std::cout << "Reading camera\n";
+        }
+    };
+
+    class LidarSensor : public Sensor
+    {
+    public:
+        void read() override
+        {
+            std::cout << "Reading lidar\n";
+        }
+    };
+
+    int main()
+    {
+        std::vector<std::unique_ptr<Sensor>> sensors;
+
+        sensors.push_back(std::make_unique<CameraSensor>());
+        sensors.push_back(std::make_unique<LidarSensor>());
+
+        for (const auto& sensor : sensors)
+        {
+            sensor->read();
+        }
+    }
+
+Here, both CameraSensor and LidarSensor are treated as Sensor.
+
+That is runtime polymorphism.
+
+------------------------------------------------------------------------
+
+C. Interfaces / abstract base classes
+
+Inheritance is useful for defining an interface.
+
+Example:
+
+    class ILogger
+    {
+    public:
+        virtual ~ILogger() = default;
+
+        virtual void log(const std::string& message) = 0;
+    };
+
+Different classes can implement this interface:
+
+    class FileLogger : public ILogger
+    {
+    public:
+        void log(const std::string& message) override
+        {
+            // write to file
+        }
+    };
+
+    class ConsoleLogger : public ILogger
+    {
+    public:
+        void log(const std::string& message) override
+        {
+            // write to console
+        }
+    };
+
+This is a good use of inheritance because it allows polymorphism without
+forcing a deep class hierarchy.
+
+------------------------------------------------------------------------
+
+5. Composition and Inheritance Together
+
+Good C++ designs often combine both.
+
+Example:
+
+    #include <iostream>
+    #include <memory>
+
+    class ILogger
+    {
+    public:
+        virtual ~ILogger() = default;
+        virtual void log(const std::string& msg) = 0;
+    };
+
+    class ConsoleLogger : public ILogger
+    {
+    public:
+        void log(const std::string& msg) override
+        {
+            std::cout << msg << "\n";
+        }
+    };
+
+    class CameraSystem
+    {
+    private:
+        ILogger& logger_;
+
+    public:
+        explicit CameraSystem(ILogger& logger)
+            : logger_(logger)
+        {
+        }
+
+        void start()
+        {
+            logger_.log("Camera system started");
+        }
+    };
+
+Here:
+
+-   ILogger uses inheritance to define an interface.
+-   CameraSystem uses composition because it has a logger.
+-   The logger can be replaced with a fake logger during testing.
+
+This is very common in real senior C++ design.
+
+------------------------------------------------------------------------
+
+6. Comparison Table
+
+  Composition                           Inheritance
+  ------------------------------------- ---------------------------------
+  Models “has-a”                        Models “is-a”
+  Object contains/uses another object   Object extends another object
+  Lower coupling                        Higher coupling
+  Easier to test                        Can be harder to test
+  Easier to replace behavior            Behavior is tied to hierarchy
+  Avoids deep hierarchies               Can create deep hierarchies
+  Good for components                   Good for polymorphic interfaces
+  Common in modern design               Useful when used carefully
+
+------------------------------------------------------------------------
+
+7. Decision Table
+
+  -----------------------------------------------------------------------
+  Situation                 Preferred Design
+  ------------------------- ---------------------------------------------
+  Car has an engine         Composition
+
+  Dog is an animal          Inheritance
+
+  Camera uses a decoder     Composition
+
+  Circle is a shape         Inheritance
+
+  AutoBrake uses a camera   Composition
+
+  Sensor interface with     Inheritance
+  Camera/Lidar/Radar        
+  implementations           
+
+  Logger used by a system   Composition
+
+  Multiple interchangeable  Composition with interface
+  algorithms                
+
+  Fixed hierarchy of        Inheritance
+  related types             
+
+  Unit testing with fake    Composition
+  dependencies              
+  -----------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+8. Interview Questions and Answers
+
+Question 1: Why is composition preferred?
+
+Composition is preferred because it reduces coupling and makes the
+system easier to maintain, test, and extend.
+
+With composition, a class can use another class without being tightly
+bound to its implementation.
+
+Example:
+
+    class CameraSystem
+    {
+    private:
+        CameraDriver driver_;
+    };
+
+CameraSystem has a CameraDriver, but it does not need to inherit from
+it.
+
+Interview answer:
+
+  Composition is preferred because it models “has-a” relationships,
+  reduces coupling, makes components replaceable, and improves
+  testability. Inheritance should be reserved for true “is-a”
+  relationships or polymorphic interfaces.
+
+------------------------------------------------------------------------
+
+Question 2: Difference between “has-a” and “is-a”?
+
+“Has-a” means one object contains or uses another object.
+
+Example:
+
+    Car has an Engine
+    CameraSystem has a Logger
+    AutoBrake has a SensorInput
+
+This is composition.
+
+“Is-a” means one object is a specialized version of another.
+
+Example:
+
+    Dog is an Animal
+    Circle is a Shape
+    CameraSensor is a Sensor
+
+This is inheritance.
+
+Interview answer:
+
+  “Has-a” means composition. One object owns or uses another object.
+  “Is-a” means inheritance. A derived class should be substitutable for
+  its base class.
+
+------------------------------------------------------------------------
+
+Question 3: When should inheritance be used?
+
+Use inheritance when:
+
+1.  There is a true “is-a” relationship.
+2.  You need runtime polymorphism.
+3.  You want to define an interface or abstract base class.
+4.  Derived objects should be usable through a base pointer or
+    reference.
+
+Example:
+
+    class Shape
+    {
+    public:
+        virtual ~Shape() = default;
+        virtual double area() const = 0;
+    };
+
+    class Circle : public Shape
+    {
+    public:
+        double area() const override
+        {
+            return 3.14 * radius_ * radius_;
+        }
+
+    private:
+        double radius_ = 1.0;
+    };
+
+Interview answer:
+
+  Inheritance should be used when there is a true “is-a” relationship
+  and when runtime polymorphism is required. A derived object should be
+  safely usable anywhere the base class is expected.
+
+------------------------------------------------------------------------
+
+Question 4: What is the diamond problem?
+
+The diamond problem happens in multiple inheritance when a class
+inherits from two classes that both inherit from the same base class.
+
+Example:
+
+    class Device
+    {
+    public:
+        int id;
+    };
+
+    class Camera : public Device
+    {
+    };
+
+    class NetworkDevice : public Device
+    {
+    };
+
+    class IPCamera : public Camera, public NetworkDevice
+    {
+    };
+
+Now IPCamera has two copies of Device:
+
+            Device
+            /    \
+       Camera   NetworkDevice
+            \    /
+            IPCamera
+
+Problem:
+
+    IPCamera cam;
+    cam.id = 10;   // Ambiguous: Camera::Device::id or NetworkDevice::Device::id?
+
+C++ can solve this with virtual inheritance:
+
+    class Camera : virtual public Device
+    {
+    };
+
+    class NetworkDevice : virtual public Device
+    {
+    };
+
+But virtual inheritance adds complexity.
+
+Interview answer:
+
+  The diamond problem is an ambiguity caused by multiple inheritance
+  when two base classes share a common base. The final derived class may
+  contain duplicate base subobjects, making member access ambiguous.
+  Virtual inheritance can solve it, but often composition is simpler.
+
+------------------------------------------------------------------------
+
+Question 5: What is dependency injection?
+
+Dependency injection means giving a class its dependencies from the
+outside instead of creating them internally.
+
+Bad design:
+
+    class CameraSystem
+    {
+    private:
+        RealCamera camera_;
+    };
+
+CameraSystem is tightly tied to RealCamera.
+
+Better design:
+
+    class ICamera
+    {
+    public:
+        virtual ~ICamera() = default;
+        virtual void capture() = 0;
+    };
+
+    class CameraSystem
+    {
+    private:
+        ICamera& camera_;
+
+    public:
+        explicit CameraSystem(ICamera& camera)
+            : camera_(camera)
+        {
+        }
+    };
+
+Now you can pass:
+
+    RealCamera
+    FakeCamera
+    MockCamera
+
+Interview answer:
+
+  Dependency injection means passing dependencies into a class, usually
+  through the constructor, instead of constructing them inside the
+  class. It reduces coupling and makes testing easier.
+
+------------------------------------------------------------------------
+
+Question 6: How does composition improve testing?
+
+Composition improves testing because dependencies can be replaced with
+fake or mock objects.
+
+Example:
+
+    class FakeCamera : public ICamera
+    {
+    public:
+        void capture() override
+        {
+            // return test frame
+        }
+    };
+
+Then:
+
+    FakeCamera fake;
+    CameraSystem system(fake);
+
+Now CameraSystem can be tested without real camera hardware.
+
+This is especially important in embedded systems, automotive systems,
+robotics, and perception systems.
+
+Interview answer:
+
+  Composition improves testing because dependencies can be injected and
+  replaced with fake or mock implementations. This allows testing the
+  class logic without requiring real hardware, files, network
+  connections, or external systems.
+
+------------------------------------------------------------------------
+
+Question 7: How does composition reduce coupling?
+
+Inheritance creates tight coupling:
+
+    class ThermalCamera : public Camera
+    {
+    };
+
+ThermalCamera depends directly on the internal design of Camera.
+
+If Camera changes, ThermalCamera may break.
+
+Composition reduces coupling:
+
+    class ImageProducer
+    {
+    private:
+        CameraDriver& driver_;
+    };
+
+ImageProducer only uses the driver through a clear interface.
+
+The implementation can change without changing ImageProducer.
+
+Interview answer:
+
+  Composition reduces coupling because a class depends on a component or
+  interface rather than inheriting implementation details from a base
+  class. The component can be replaced or modified independently.
+
+------------------------------------------------------------------------
+
+Question 8: Can composition and inheritance be combined?
+
+Yes. This is very common in modern C++.
+
+A common pattern is:
+
+1.  Use inheritance to define an interface.
+2.  Use composition to inject and use that interface.
+
+Example:
+
+    class IDecoder
+    {
+    public:
+        virtual ~IDecoder() = default;
+        virtual void decode() = 0;
+    };
+
+    class H264Decoder : public IDecoder
+    {
+    public:
+        void decode() override
+        {
+            // decode H264
+        }
+    };
+
+    class ImageProducer
+    {
+    private:
+        IDecoder& decoder_;
+
+    public:
+        explicit ImageProducer(IDecoder& decoder)
+            : decoder_(decoder)
+        {
+        }
+
+        void process()
+        {
+            decoder_.decode();
+        }
+    };
+
+Here:
+
+-   IDecoder and H264Decoder use inheritance.
+-   ImageProducer uses composition.
+
+Interview answer:
+
+  Yes. A common senior C++ design is to use inheritance for interfaces
+  and composition for ownership or usage. This gives polymorphism while
+  keeping the main system modular and testable.
+
+------------------------------------------------------------------------
+
+9. Common Mistakes
+
+Mistake 1: Using inheritance for code reuse only
+
+Bad:
+
+    class Logger
+    {
+    public:
+        void log();
+    };
+
+    class CameraSystem : public Logger
+    {
+    };
+
+This suggests CameraSystem is a Logger, which is not true.
+
+Better:
+
+    class CameraSystem
+    {
+    private:
+        Logger logger_;
+    };
+
+------------------------------------------------------------------------
+
+Mistake 2: Deep inheritance hierarchy
+
+Example:
+
+    Device
+      -> Sensor
+         -> Camera
+            -> StereoCamera
+               -> LongRangeStereoCamera
+
+This becomes hard to maintain.
+
+Prefer smaller components:
+
+    CameraSystem
+      -> CameraDriver
+      -> Decoder
+      -> Calibrator
+      -> Logger
+
+------------------------------------------------------------------------
+
+Mistake 3: Missing virtual destructor
+
+If a base class is used polymorphically, it should usually have a
+virtual destructor.
+
+Bad:
+
+    class Base
+    {
+    public:
+        virtual void run() = 0;
+    };
+
+    class Derived : public Base
+    {
+    };
+
+Better:
+
+    class Base
+    {
+    public:
+        virtual ~Base() = default;
+        virtual void run() = 0;
+    };
+
+------------------------------------------------------------------------
+
+10. Senior Interview Summary
+
+A strong answer:
+
+  Composition is generally preferred because it models “has-a”
+  relationships, reduces coupling, improves testability, and makes
+  behavior easier to replace. Inheritance is useful when there is a real
+  “is-a” relationship and runtime polymorphism is needed. In modern C++,
+  a common design is to define interfaces using inheritance and then use
+  composition to inject those interfaces into classes.
+
+------------------------------------------------------------------------
+
+11. Key Takeaways
+
+-   Composition = “has-a”
+-   Inheritance = “is-a”
+-   Prefer composition by default.
+-   Use inheritance for polymorphic interfaces.
+-   Avoid inheritance purely for code reuse.
+-   Avoid deep inheritance hierarchies.
+-   Use dependency injection to improve testing.
+-   Composition and inheritance can be combined effectively.

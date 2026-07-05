@@ -1,0 +1,71 @@
+POSIX:
+
+Portable Operating System Interface
+
+It is a standard that defines how an operating system should expose APIs to applications.
+
+
+Mutex vs Semaphore
+
+This is an extremely common interview question.
+
+Mutex	             Semaphore
+Owner exists	       No owner
+Only one thread	       Many threads
+Lock/Unlock	       Wait/Post
+Binary	               Binary or counting
+Protect data	       Manage resources
+
+
+
+These synchronization primitives solve different problems:
+
+Primitive	                           Purpose	                                                      Typical Use
+Mutex	                    Protect shared data from concurrent access	                      Guard a shared variable, container, or object
+Semaphore	            Count available resources or signal availability	              Limit access to a resource pool, producer-consumer queues
+Condition Variable	    Allow threads to sleep until a specific condition becomes true    Wait for work to arrive, wait for state changes
+
+
+
+“Why do we need virtual memory?”
+Good answer:
+
+To provide process isolation, memory protection, efficient RAM usage, 
+and a simplified programming model where each process believes it has a contiguous private address space starting from zero.
+
+
+One-line senior-level summary
+
+Virtual memory provides:
+Each process a private, protected, and simplified memory space, 
+while the OS and MMU transparently map it onto real physical RAM (and disk if needed).
+
+
+C++ pointer
+   ↓
+Virtual address (process-private illusion)
+   ↓
+MMU + Page table (OS-managed translation)
+   ↓
+Physical RAM (shared hardware)
+
+
+
+If an interviewer asks you:
+“What does a pointer contain?”
+
+Good answer:
+
+A pointer contains a virtual address in the process's address space. 
+It is not a physical address. The OS and MMU translate it to physical memory using page tables.
+
+
+
+
+
+
+
+
+
+
+

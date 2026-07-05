@@ -1,0 +1,159 @@
+Senior C++ Interview Trap Questions Checklist
+
+This checklist is organized by category and priority (★★★★★ = highest
+interview frequency).
+
+1. STL & Containers (★★★★★)
+
+1.  Why is std::vector special?
+2.  Difference between size() and capacity().
+3.  How does std::vector grow internally?
+4.  Why is push_back() amortized O(1)?
+5.  When are iterators invalidated?
+6.  Why is std::list rarely used?
+7.  Is std::set ordered?
+8.  Difference: set vs unordered_set.
+9.  Difference: map vs unordered_map.
+10. Why can unordered_map degrade to O(n)?
+11. What is cache locality?
+12. reserve() vs resize().
+13. push_back() vs emplace_back().
+
+2. Modern C++ Language (★★★★★)
+
+1.  const vs constexpr.
+2.  constexpr vs consteval.
+3.  virtual vs override.
+4.  override vs final.
+5.  Why always use override?
+6.  What is noexcept?
+7.  Copy constructor vs move constructor.
+8.  Rule of Three.
+9.  Rule of Five.
+10. Rule of Zero.
+11. nullptr vs NULL vs 0.
+12. std::move() really moves?
+13. auto and decltype.
+
+3. Object-Oriented Programming (★★★★★)
+
+1.  What is object slicing?
+2.  Why should a base class destructor be virtual?
+3.  Composition vs inheritance.
+4.  Why prefer composition?
+5.  Static vs dynamic polymorphism.
+6.  What is a vtable?
+7.  Cost of virtual functions.
+8.  Can constructors be virtual?
+9.  Can static functions be virtual?
+10. Pure virtual functions.
+
+4. Memory Management (★★★★★)
+
+1.  Stack vs heap.
+2.  malloc/free vs new/delete.
+3.  delete vs delete[].
+4.  RAII.
+5.  unique_ptr.
+6.  shared_ptr.
+7.  weak_ptr.
+8.  Why can shared_ptr leak?
+9.  Why does weak_ptr exist?
+10. Alignment and padding.
+11. Memory fragmentation.
+
+5. Multithreading (★★★★★)
+
+1.  Mutex vs semaphore.
+2.  Deadlock.
+3.  Livelock.
+4.  Starvation.
+5.  Race condition.
+6.  Atomic vs mutex.
+7.  False sharing.
+8.  Memory ordering.
+9.  Condition variables.
+10. Thread-safe singleton.
+
+6. Templates & Advanced Language (★★★★☆)
+
+1.  What is ellipsis?
+2.  Variadic templates.
+3.  Function templates.
+4.  Class templates.
+5.  Template specialization.
+6.  SFINAE.
+7.  Concepts (C++20).
+8.  Perfect forwarding.
+9.  std::forward().
+10. Lambda captures.
+
+7. Performance & Optimization (★★★★★)
+
+1.  Copy vs move.
+2.  Return Value Optimization (RVO).
+3.  Named RVO (NRVO).
+4.  Copy elision.
+5.  Pass-by-value vs pass-by-const-reference.
+6.  Inline functions.
+7.  Cache locality.
+8.  Branch prediction.
+9.  SIMD basics.
+
+8. Operating Systems & Linux (★★★★☆)
+
+1.  Virtual memory.
+2.  DMA.
+3.  Process vs thread.
+4.  IPC methods.
+5.  Shared memory.
+6.  mmap().
+7.  POSIX.
+8.  Signals.
+9.  Spinlock vs mutex.
+10. Context switching.
+
+9. Debugging (★★★★★)
+
+1.  How do you debug a segmentation fault?
+2.  How do you debug a deadlock?
+3.  Using gdb.
+4.  Valgrind.
+5.  AddressSanitizer.
+6.  ThreadSanitizer.
+7.  Undefined Behavior.
+
+10. Classic “Trap” Questions (★★★★★)
+
+1.  Why is vector special?
+2.  Is set ordered?
+3.  Why is std::endl slower than ‘’?
+4.  Why avoid using namespace std; in headers?
+5.  nullptr vs NULL.
+6.  push_back() vs emplace_back().
+7.  Why can’t unique_ptr be copied?
+8.  Why can shared_ptr leak?
+9.  Why doesn’t std::move() actually move?
+
+Recommended Study Order
+
+1.  const vs constexpr
+2.  vector
+3.  override / virtual / final
+4.  set vs unordered_set
+5.  map vs unordered_map
+6.  Vector internals
+7.  Rule of Five
+8.  Move semantics
+9.  Smart pointers
+10. RAII
+11. Iterator invalidation
+12. Object slicing
+13. Vtable
+14. Templates & variadic templates
+15. Multithreading
+16. Cache locality
+17. noexcept
+18. Copy elision / RVO
+19. Debugging tools
+20. Linux internals

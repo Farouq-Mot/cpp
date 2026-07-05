@@ -1,0 +1,202 @@
+C++ Compile Time vs Runtime and constexpr Summary
+
+1. Compile Time vs Runtime
+
+Compile Time
+
+The compiler reads your code, checks it for errors, performs type
+checking, and may evaluate constant expressions.
+
+Examples:
+
+    constexpr int x = 5;
+    constexpr int y = x * 2;   // Computed during compilation
+
+Runtime
+
+The executable is running. User input, sensors, files, network, and most
+calculations happen here.
+
+Example:
+
+    int x;
+    std::cin >> x;
+    int y = x * 2;   // Computed while the program is running
+
+Rule of Thumb
+
+Ask yourself:
+
+  Can the compiler know the exact value before the program starts?
+
+-   Yes → Compile time
+-   No → Runtime
+
+------------------------------------------------------------------------
+
+2. const vs constexpr
+
+  Feature                          const        constexpr
+  -------------------------------- ------------ -----------
+  Read-only                        ✅           ✅
+  Compile-time constant            Not always   Yes
+  Runtime initialization allowed   ✅           ❌
+  Must be initialized              ✅           ✅
+
+Examples:
+
+    const int a = 5;           // Read-only
+    const int b = rand();      // Runtime value
+
+    constexpr int c = 5;       // Compile-time constant
+
+Remember:
+
+-   Every constexpr variable is implicitly const.
+-   Not every const variable is constexpr.
+
+------------------------------------------------------------------------
+
+3. constexpr Variables
+
+Valid:
+
+    constexpr int x = 10;
+
+Invalid (cannot modify):
+
+    constexpr int x = 10;
+    x = 20;          // Compile error
+
+Invalid (runtime initialization):
+
+    int getValue();
+
+    constexpr int x = getValue();   // Compile error
+
+Invalid (missing initialization):
+
+    constexpr int x;    // Compile error
+
+------------------------------------------------------------------------
+
+4. constexpr Functions
+
+    constexpr int square(int x)
+    {
+        return x * x;
+    }
+
+Important:
+
+A constexpr function can execute at compile time.
+
+It is not required to.
+
+Whether it does depends on the arguments.
+
+Compile-time example:
+
+    constexpr int a = square(5);
+
+Runtime example:
+
+    int x = 5;
+    int y = square(x);
+
+Since x is not a compile-time constant, the function executes at
+runtime.
+
+------------------------------------------------------------------------
+
+5. Common Interview Questions
+
+Question
+
+    constexpr int add(int a, int b)
+    {
+        return a + b;
+    }
+
+    int x = 5;
+
+    int y = add(x, 3);
+
+Answer:
+
+-   Compiles? ✅ Yes
+-   Compile time? ❌
+-   Runtime? ✅
+
+Reason:
+
+x is a runtime variable.
+
+------------------------------------------------------------------------
+
+Question
+
+    constexpr int x = 5;
+    constexpr int y = add(x, 3);
+
+Answer:
+
+Compile time.
+
+------------------------------------------------------------------------
+
+Question
+
+    constexpr int x = 5;
+
+    int y = add(5, 3);
+
+Answer:
+
+The expression can be evaluated at compile time because all arguments
+are constant expressions.
+
+However, y is not declared constexpr, so the language does not require
+compile-time evaluation. Most optimizing compilers will still fold it
+into the constant 8.
+
+------------------------------------------------------------------------
+
+6. When Does constexpr Cause Compile Errors?
+
+  Code                            Compile?   Why
+  ------------------------------- ---------- -----------------------------
+  constexpr int x = 5;            ✅         Valid compile-time constant
+  x = 6;                          ❌         Read-only
+  constexpr int x;                ❌         Must be initialized
+  constexpr int x = getValue();   ❌         Runtime function
+  constexpr int x = square(5);    ✅         Constant expression
+  int y = square(runtimeValue);   ✅         Runs at runtime
+
+------------------------------------------------------------------------
+
+7. Interview Summary
+
+Compile Time
+
+-   Happens while compiling.
+-   Compiler checks syntax and types.
+-   Computes constant expressions.
+-   Produces the executable.
+
+Runtime
+
+-   Happens after the executable starts.
+-   Uses user input, files, sensors, network, etc.
+-   Performs calculations whose values were not known during
+    compilation.
+
+One-Sentence Definition
+
+constexpr means:
+
+  “This value or function can be evaluated during compilation if all
+  required information is known.”
+
+A constexpr function is allowed to execute at runtime when its arguments
+are not compile-time constants.

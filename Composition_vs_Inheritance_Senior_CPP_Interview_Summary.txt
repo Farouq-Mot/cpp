@@ -1,0 +1,170 @@
+Composition vs Inheritance (Senior C++ Interview Summary)
+
+The Golden Rule
+
+  Favor composition over inheritance.
+
+Composition should generally be your default choice. Use inheritance
+only when there is a true “is-a” relationship.
+
+------------------------------------------------------------------------
+
+What is Inheritance?
+
+Inheritance models an “is-a” relationship.
+
+    class Animal {
+    public:
+        virtual void speak() = 0;
+    };
+
+    class Dog : public Animal {
+    public:
+        void speak() override { std::cout << "Woof\n"; }
+    };
+
+A Dog is an Animal.
+
+------------------------------------------------------------------------
+
+What is Composition?
+
+Composition models a “has-a” relationship.
+
+    class Engine {
+    public:
+        void start() { std::cout << "Engine started\n"; }
+    };
+
+    class Car {
+        Engine engine;
+    public:
+        void start() { engine.start(); }
+    };
+
+A Car has an Engine.
+
+------------------------------------------------------------------------
+
+Why Composition is Preferred
+
+1.  Lower coupling
+2.  Easier maintenance
+3.  More flexible
+4.  Easier unit testing
+5.  Avoids multiple inheritance issues
+
+------------------------------------------------------------------------
+
+Flexible Design Example
+
+    class Engine {
+    public:
+        virtual ~Engine() = default;
+        virtual void start() = 0;
+    };
+
+    class GasEngine : public Engine {};
+    class ElectricMotor : public Engine {};
+
+    class Car {
+        std::unique_ptr<Engine> engine_;
+    public:
+        explicit Car(std::unique_ptr<Engine> e)
+            : engine_(std::move(e)) {}
+    };
+
+Different engines can be swapped without changing Car.
+
+------------------------------------------------------------------------
+
+Embedded Example
+
+Instead of:
+
+-   Camera150 : Camera
+-   Camera170 : Camera
+-   ThermalCamera : Camera
+
+Prefer:
+
+ImageProducer └── CameraDriver
+
+The driver becomes interchangeable.
+
+------------------------------------------------------------------------
+
+Good vs Bad Uses of Inheritance
+
+Good (“is-a”):
+
+-   Dog is an Animal
+-   Truck is a Vehicle
+-   Circle is a Shape
+
+Bad (“has-a”):
+
+-   Car is an Engine
+-   Camera is a Decoder
+-   Window is a Keyboard
+
+Use composition for the “has-a” examples.
+
+------------------------------------------------------------------------
+
+Comparison Table
+
+  Composition         Inheritance
+  ------------------- ------------------
+  Has-a               Is-a
+  Lower coupling      Higher coupling
+  Easier to modify    Harder to modify
+  Easier to test      Harder to test
+  Replaceable parts   Fixed hierarchy
+  Modular             Can become rigid
+
+------------------------------------------------------------------------
+
+Decision Table
+
+  Situation                    Best Choice
+  ---------------------------- -------------
+  Dog is an Animal             Inheritance
+  Car has an Engine            Composition
+  Camera uses Decoder          Composition
+  Shape hierarchy              Inheritance
+  AutoBrake uses Camera        Composition
+  ImageProcessor uses Logger   Composition
+
+------------------------------------------------------------------------
+
+Common Interview Questions
+
+1.  Why is composition preferred?
+2.  Difference between “has-a” and “is-a”?
+3.  When should inheritance be used?
+4.  What is the diamond problem?
+5.  What is dependency injection?
+6.  How does composition improve testing?
+7.  How does composition reduce coupling?
+8.  Can composition and inheritance be combined?
+
+------------------------------------------------------------------------
+
+Interview Answer
+
+Composition is generally preferred because it creates a “has-a”
+relationship, reduces coupling, improves maintainability, and makes
+testing easier. Components can be replaced independently without
+redesigning the class hierarchy. Inheritance should be reserved for
+genuine “is-a” relationships that require runtime polymorphism.
+
+------------------------------------------------------------------------
+
+Key Takeaways
+
+-   Default to composition.
+-   Use inheritance only for true “is-a” relationships.
+-   Composition leads to modular, maintainable, and testable systems.
+-   Modern C++ designs often combine composition with interfaces for
+    polymorphism.
